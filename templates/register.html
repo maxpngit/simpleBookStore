@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация пользователя{% endblock %}
+
+{% block body %}
+<div class="container-fluid d-flex h-100 justify-content-center align-items-center p-0">
+    <div class="row bg-white shadow-sm">
+        <div class="col border rounded p-4">
+            <h3 class="text-center mb-4">Регистрация нового пользователя</h3>
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", type="email") }}
+                    {% for error in form.email.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+                {% endfor %}
+                </p>
+                <p>
+                    {{ form.password.label }}
+                    {{ form.password(class="form-control", type="password") }}
+                    {% for error in form.password.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+                {% endfor %}
+                </p>
+                <p>
+                    {{ form.password_again.label }}
+                    {{ form.password_again(class="form-control", type="password") }}
+                    {% for error in form.password_again.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+                {% endfor %}
+                </p>
+                <p>
+                    {{ form.name.label }}
+                    {{ form.name(class="form-control") }}
+                    {% for error in form.name.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+                {% endfor %}
+                </p>
+                <p>
+                    {{ form.about.label }}
+                    {{ form.about(class="form-control") }}
+                    {% for error in form.about.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+                {% endfor %}
+                </p>
+                <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+                {{message}}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

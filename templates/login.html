@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block body %}
+<div class="container-fluid d-flex h-100 justify-content-center align-items-center p-0">
+    <div class="row bg-white shadow-sm">
+        <div class="col border rounded p-4">
+            <h3 class="text-center mb-4">Авторизация</h3>
+            {% if message %}
+            <div class="container">
+                <h5 class="text-danger">{{message}}</h5>
+            </div>
+            {% endif %}
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.username.label }}
+                    {{ form.username(class="form-control") }}
+                    {% for error in form.username.errors %}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endfor %}
+                </p>
+                <p>
+                    {{ form.password.label }}
+                    {{ form.password(class="form-control", type="password") }}
+                    {% for error in form.password.errors %}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endfor %}
+                </p>
+                <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+                <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container text-center mb-4 p-3">
+    <h5>Если у Вас нет логина и пароля,<br/>Вам необходимо
+        <a href="/register" title="Регистрация">зарегистрироваться</a>!
+    </h5>
+</div>
+{% endblock %}

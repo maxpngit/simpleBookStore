@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}История скачиваний{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="d-flex justify-content-center p-1">
+        <img height="120" width="120" src="/static/images/rules.png" alt="О нас">
+    </div>
+    <div class="text-center p-4 fs-5 text-dark">
+        <h1>История Ваших скачиваний:</h1>
+    </div>
+    {% if data %}
+    {% for item in data %}
+    <div class="fs-5 h5 text-dark">
+        {{ loop.index }}. {{ data[loop.index-1][0] }} &#8594; "{{ data[loop.index-1][1] }}".
+        Скачано: {{ data[loop.index-1][2] }}.
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="fs-5 h5 text-dark" style="text-indent: 50px;">
+        Пока Вами ничего не было скачано. Но это не сложно исправить. К Вашим услугам выбор жанров и поиск. Заходите на
+        <a href="/">главную</a> страницу и выбирайте интересующие книги.
+    </div>
+    {% endif %}
+    {% if admin %}
+    <div class="fs-5 h5 text-danger" style="text-indent: 50px;">
+        <b>P.S.</b> Вообще-то Вы &#151; админ. Не ясно, для чего Вам скачивать книги &#128558;!
+        Вы ведь их сами добавляете &#128521;!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

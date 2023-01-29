@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Такой страницы нет (ошибка 404){% endblock %}
+
+{% block body %}
+<center>
+    <div class="row">
+        <div class="w-50 mx-auto">
+            <div class="alert alert-danger" role="alert">
+                <h1><img src="{{ url_for('static', filename='images/nobook.png') }}" alt="все права защищены"
+                         width="75" height="75"> Книг здесь нет!</h1>
+            </div>
+            <h5 class="fs-5 text-muted">Страница не существует, либо Вы
+                не <a href="/login" title="Вернуться на главную">авторизованы</a>!</h5>
+            <h4 class="fs-5 text-muted">Но на <a href="/" title="Вернуться на главную">главной</a>
+                странице Вам помогут &#128521;
+            </h4>
+        </div>
+    </div>
+</center>>
+{% endblock %}

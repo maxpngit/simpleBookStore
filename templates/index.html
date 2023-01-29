@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Электронная библиотека{% endblock %}
+
+{% block body %}
+<!-- форма для поиска GET-методом -->
+<div class="d-flex justify-content-end p-1 mb-2 border-bottom">
+    <form method="get">
+        <div class="row">
+            <div class="col-md-8">
+                <input class="form-control" name="context" id="context" placeholder="Книга для поиска">
+            </div>
+            <button class="btn btn-info">Найти</button>
+        </div>
+    </form>
+</div>
+<!-- форма для сортировки -->
+<div class="container">
+    <div class="d-flex justify-content-end">
+        <form method="post" action="/">
+            <div class="row">
+                <label class="form-label"><b>Выбор книг по жанрам</b>:</label>
+                <div class="col-md-8">
+                    <select class="form-control" name="genre" id="genre">
+                        <option>Всё</option>
+                        {% for item in genres %}
+                        {% if item.name == curgenre %}
+                        <option selected>{{item.name}}</option>
+                        {% else %}
+                        <option>{{item.name}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-primary">Показать</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- заголовок -->
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Электронные книги в наличии</h1>
+    {% if not current_user.is_authenticated %}
+    <h4>(для скачивания необходимо <a href="/login" title="Войти с логином и паролем">войти</a>
+        или <a href="/register" title="Регистрация">зарегистрироваться</a>)</h4>
+    {% endif %}
+</div>
+<!-- pagination on top -->
+<div class="container d-flex justify-content-center text-center">
+    {{ pagination.links }}
+</div>
+<!-- генерация перечня -->
+<div class="container">
+    <div class="card-deck mb-3 text-center">
+        <div class="row" style="display: flex; flex-flow: row wrap;">
+            {% for item in data %}
+            <div class="col">
+                <div class="card mb-4 shadow-sm p-3 border bg-light rounded">
+                    <div style="height: 270px; background-color: rgba(128,64,32,0.1);" class="text-center">
+                        <br/>
+                        <img style="height: 220px;" src="/static/covers/{{ item.cover }}"
+                             class="border border-light rounded img-fluid" alt="{{ item.title }}">
+                    </div>
+                    <div class="card-header">
+                        <h3 class="card-title pricing-card-title">{{ item.title }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="my-0 font-weight-normal">{{ item.author }}</h5>
+                        <ul class="list-unstyled mt-3 mb-4"> &nbsp;{{ item.descript }}</ul>
+                        {% if current_user.is_authenticated %}
+                        <a href="/download/{{ item.id }}" class="btn btn-lg btn-block btn-outline-primary">Скачать</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if not loop.index % 2 %}
+            <div class="w-100"></div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- pagination at bottom -->
+<div class="container px-3 py-3 pt-md-5 pb-md-4 mx-auto d-flex justify-content-center text-center">
+    {{ pagination.links }}
+</div>
+{% endblock %}

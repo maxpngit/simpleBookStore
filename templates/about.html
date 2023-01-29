@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}О библиотеке{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="text-center fs-5 text-dark">
+        <h1>Про библиотеку</h1>
+        <p class="h5">(несколько слов о нас и наших правилах)</p>
+    </div>
+    <div class="d-flex justify-content-center p-1">
+        <img height="220" width="220" src="/static/images/rules.png" alt="О нас">
+    </div>
+    <div class="fs-5 h5 text-dark" style="text-indent: 50px;">Вашему вниманию предлагается тестовая электронная
+        библиотека книг и публикаций по программированию, обладающая богатыми возможностями поиска и выбора интересующих
+        жанров.
+    </div>
+    <div class="fs-5 h5 text-darm" style="text-indent: 50px;"> Здесь можно скачивать тестовые версии книг, для доступа к
+        которым достаточно <a href="/register" title="Регистрация"> регистрации</a>. Если Вы - зарегистрированный
+        пользователь, Вам необходимо <a href="/login" title="Войти с логином и паролем">авторизоваться</a>.
+    </div>
+</div>
+{% endblock %}
