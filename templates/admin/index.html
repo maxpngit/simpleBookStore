@@ -1,0 +1,299 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}{{data}}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <!-- breadcrumbs - хлебные крошки -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/api/admin" title="Назад в корень панели...">Главная</a></li>
+            {% if crumb %}
+            <li class="breadcrumb-item"><a href="/api/admin/{{crumb[0]}}"
+                                           title="Назад к {{crumb[1]}}...">{{crumb[1]}}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{data}}</li>
+        </ol>
+    </nav>
+    <!-- end of breadcrumbs -->
+    {% if g_json['status'] == 'error' %}
+    <h3 align="center" class="text-danger">{{g_json['errormsg']}}</h3>
+    {% endif %}
+    {% if g_json['status'] == 'index' %}
+    <!-- выбор действия для администратора -->
+    <table align="center" cellspacing="0" cellpadding="20">
+        <tr align="center" class="h3">
+            <th colspan="3">Что (кого) администрируем?</th>
+        </tr>
+        <tr align="center" class="h3">
+            <td><a href="/api/admin/{{g_json['action'][0]}}">Жанры</a></td>
+            <td><a href="/api/admin/{{g_json['action'][1]}}">Книги</a></td>
+            <td><a href="/api/admin/{{g_json['action'][2]}}">Пользователи</a></td>
+        </tr>
+    </table>
+    {% endif %}
+    {% if g_json['status'] == 'create' %}
+    <!-- форма добавления нового жанра книг-->
+    <form method="post">
+        <table align="center" cellspacing="0" cellpadding="5">
+            <tr align="right">
+                <td>&nbsp;</td>
+                <td><input type="hidden" class="form-control" name="id" id="id" value="{{g_json['genre']}}"></td>
+            </tr>
+            <tr align="right">
+                <td>Новый жанр:</td>
+                <td><input type="text" class="form-control" name="name" id="name"></td>
+            </tr>
+        </table>
+        <div class="d-flex justify-content-center text-center p-3 px-md-4 mb-3">
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+    </form>
+    {% endif %}
+    {% if g_json['status'] == 'users' %}
+    <!-- генерация перечня пользователей-->
+    <div class="d-flex justify-content-center text-center h3 p-2">
+        {{data}}<br>(только просмотр и удаление)
+    </div>
+    <table align="center" cellpadding="10" cellspacing="0" border="1">
+        <tr align="center">
+            <th>#</th>
+            <th>Имя</th>
+            <th>Когда зарегистрирован</th>
+            <th>Примечание</th>
+            <th style="background-color: gray;">&nbsp;</th>
+        </tr>
+        {% for key, val in g_json['record'].items() %}
+        <tr align="right">
+            <td>{{loop.index}}</td>
+            <td>{{val[0]}}</td>
+            <td>
+                {% if val[1] != 2 %}
+                {{val[2]}}
+                {% else %}
+                <b>Он назначен &#128521;</b>
+                {% endif %}
+            </td>
+            <td>
+                {% if val[1] == 2 %}
+                <b>АДМИН</b>
+                {% endif %}
+            </td>
+            <td>
+                {% if val[1] == 1 %}
+                <a href="/api/admin/users/del/{{key}}" title="Удалить запись №{{key}}"
+                   onclick="return confirm('Вы действительно хотите удалить пользователя {{val[0]}}?')">
+                    <img width="20" height="20" src="/static/images/delete.png"
+                         alt="Удалить запись №{{key}}">
+                </a>
+                {% else %}
+                <span style="color: red;" title="Удалять админа нельзя!"><b>&cross;</b></span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    {% if g_json['status'] == 'genres' %}
+    <!-- генерация перечня жанров-->
+    <div class="d-flex justify-content-center text-center h3 p-2">
+        {{data}}
+    </div>
+    <table align="center" cellpadding="10" cellspacing="0" border="1">
+        {% for key, val in g_json['record'].items() %}
+        <tr>
+            <td>{{loop.index}}</td>
+            <td>{{val}}</td>
+            <td>
+                <a href="/api/admin/genres/edit/{{key}}" title="Редактировать запись №{{key}}">
+                    <img width="20" height="20" src="/static/images/edit.png"
+                         alt="Редактировать запись №{{key}}">
+                </a>
+            </td>
+            <td>
+                <a href="/api/admin/genres/del/{{key}}" title="Удалить запись №{{key}}"
+                   onclick="return confirm('Вы действительно хотите удалить жанр {{val}}?')">
+                    <img width="20" height="20" src="/static/images/delete.png"
+                         alt="Удалить запись №{{key}}">
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="d-flex justify-content-center text-center p-3 px-md-4 mb-3">
+        <a class="btn btn-primary" href="/api/admin/genres/create">Добавить</a>
+    </div>
+    {% endif %}
+    {% if g_json['status'] == 'edit' %}
+    <!-- форма редактирования жанра книг-->
+    <form method="post">
+        <table align="center" cellspacing="0" cellpadding="5">
+            {% for key, val in g_json['genre'].items() %}
+            <tr align="right">
+                <td><input type="{{val[1]}}" class="form-control" name="{{key}}" id="{{key}}" value="{{val[0]}}"></td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div class="d-flex justify-content-center text-center p-3 px-md-4 mb-3">
+            <button type="submit" class="btn btn-primary">Изменить</button>
+        </div>
+    </form>
+    {% endif %}
+    {% if g_json['status'] == 'books' %}
+    <!-- pagination on top -->
+    <div class="container d-flex justify-content-center text-center">
+        {{ pagination.links }}
+    </div>
+    <!-- генерация перечня книг-->
+    <div class="d-flex justify-content-center text-center h3 p-2">
+        {{data}}
+    </div>
+    <table align="center" class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">№№</th>
+            <th scope="col">Автор</th>
+            <th scope="col">Название</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for key, val in g_json['record'].items() %}
+        <tr>
+            <th scope="row">{{(page - 1) * 10 + loop.index}}</th>
+            <td>{{val[0]}}</td>
+            <td>{{val[1]}}</td>
+            <td>
+                <a href="/api/admin/books/edit/{{key}}" title="Редактировать запись №{{key}}">
+                    <img width="20" height="20" src="/static/images/edit.png"
+                         alt="Редактировать запись №{{key}}">
+                </a>
+            </td>
+            <td>
+                <a href="/api/admin/books/del/{{key}}" title="Удалить запись №{{key}}"
+                   onclick="return confirm('Вы действительно хотите удалить книгу №{{key}}?')">
+                    <img width="20" height="20" src="/static/images/delete.png"
+                         alt="Удалить запись №{{key}}">
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center text-center p-3 px-md-4 mb-3">
+        <a class="btn btn-primary" href="/api/admin/books/create">Добавить</a>
+    </div>
+    <!-- pagination at bottom -->
+    <div class="container d-flex justify-content-center text-center">
+        {{ pagination.links }}
+    </div>
+    {% endif %}
+    {% if g_json['status'] == 'createbook' %}
+    <!-- форма добавления (редактирования) новой книги-->
+    <div class="container">
+        {% if edtit %}
+        <div class="d-flex align-items-center h3 p-3 px-md-4 mb-3 bg-light text-center">
+            {{edtit}}
+        </div>
+        {% else %}
+        <h1 align="center">Добавление книги</h1>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            {% if g_json['message'] %}
+            <div class="container">
+                <h5 class="text-danger">Ошибка при заполнении формы!</h5>
+            </div>
+            {% endif %}
+            <div class="mb-3">
+                {% if 'title' in g_json['message'].keys() %}
+                <label class="text-danger"><b>Название книги (не введено)</b>:</label>
+                {% else %}
+                <label class="form-label"><b>Название книги</b>:</label>
+                {% endif %}
+                <input type="text" class="form-control" name="title" value="{{ g_json['fields']['title'] }}" id="title"
+                       aria-describedby="bookHelp">
+                <div id="bookHelp" class="form-text">вводить без сокращений.</div>
+            </div>
+            <div class="mb-3">
+                {% if 'author' in g_json['message'].keys() %}
+                <label class="text-danger"><b>Автор книги (не указан)</b>:</label>
+                {% else %}
+                <label class="form-label"><b>Автор книги</b>:</label>
+                {% endif %}
+                <input type="text" class="form-control" name="author" id="author"
+                       value="{{ g_json['fields']['author'] }}"
+                       aria-describedby="bookHelp">
+                <div id="bookHelp" class="form-text">вводить все ФИО по порядку: Иванов И.И., Петров С.А.</div>
+            </div>
+            <div class="mb-3">
+                {% if 'genre' in g_json['message'].keys() %}
+                <label class="text-danger"><b>Жанр книги (не выбран)</b>:</label>
+                {% else %}
+                <label class="form-label"><b>Жанр книги</b>:</label>
+                {% endif %}
+                {% set options = g_json['genres'] %}
+                <select class="form-control" name="genre" id="genre">
+                    {% if g_json['fields'] == None %}
+                    {% for item in options %}
+                    <option>{{item}}</option>
+                    {% endfor %}
+                    {% else %}
+                    {% for item in options %}
+                    {% if item in g_json['fields']['genre'] %}
+                    <option selected>{{item}}</option>
+                    {% else %}
+                    <option>{{item}}</option>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><b>Описание (не обязательно)</b>:</label>
+                <textarea class="form-control" name="descript" id="descript" rows="3">{{ g_json['fields']['descript'] }}
+                </textarea>
+            </div>
+            <div class="w-50 bg-light border p-2 rounded">
+                <div class="mb-3 p-1">
+                    {% if 'cover' in g_json['message'].keys() %}
+                    <label class="text-danger"><b>Файл обложки (не выбран)</b>:</label>
+                    {% else %}
+                    <label class="form-label"><b>Файл обложки</b>:</label>
+                    {% endif %}
+                    <input type="file" name="cover" id="cover" value="{{ g_json['fields']['cover'] }}"
+                           accept=".jpg,.jpeg,.png,.gif" aria-describedby="bookHelp">
+                    <div id="bookHelp" class="form-text">(допускаются файлы: ".jpg"; ".jpeg"; ".png"; ".gif").</div>
+                </div>
+                <hr>
+                <div class="mb-3 p-1">
+                    {% if 'pdf' in g_json['message'].keys() %}
+                    <label class="text-danger"><b>PDF-файл книги (не выбран)</b>:</label>
+                    {% else %}
+                    <label class="form-label"><b>PDF-файл книги</b>:</label>
+                    {% endif %}
+                    <input type="file" name="pdf" id="pdf" value="{{ g_json['fields']['pdf'] }}" accept=".pdf"
+                           aria-describedby="bookHelp">
+                    <div id="bookHelp" class="form-text">(допускается только ".pdf-файл").</div>
+                </div>
+                {% if edtit %}
+                <div class="h5 p-1 px-md-4 mb-3 bg-warning text-center">
+                    <input type="checkbox" id="nofiles" name="nofiles" value="1" checked>
+                    <label for="nofiles">Файлы обложки и PDF не обновлять!</label>
+                </div>
+                {% endif %}
+            </div>
+            {% if edtit %}
+            <div class="p-3">
+                <button type="submit" class="btn btn-primary">Обновить</button>
+            </div>
+            {% else %}
+            <div class="p-3">
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
